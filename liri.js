@@ -54,7 +54,7 @@ var client = new Twitter({
   });
 
 // Wrapping the client.get call in a function or case statement does NOT work...I get TypeError: Cannot read property 'get' of undefined
-// function myTweets() {
+function myTweets() {
 // Call client.get method from twitter npm pkg
     var params = {screen_name: 'jenguin777', count: 20};
     client.get('statuses/user_timeline', params, function(error, tweets, response) {
@@ -69,7 +69,7 @@ var client = new Twitter({
         }
         console.log("|REMOVE BEFORE SUBMISSION--------END TWITTER-----------|");
     });
-// }
+}
 
 //----------------PROCESS SPOTIFY-----------------------------//
 
@@ -78,22 +78,25 @@ var spotify = new Spotify({
     secret: keys.spotify.secret
 });
 
-var songName = "";
-nodeArgs = process.argv;
+// Wrapping the spotify.search call in a function or case statement does NOT work...I get TypeError: Cannot read property 'get' of undefined
+function spotifySong() {
 
-// Loop through all the words in the node argument starting at index 3
-for (var i = 3; i< nodeArgs.length; i++) {
-    //strip off the last plus sign
-    if(i > 3 && i < nodeArgs.length) {
-        songName = songName + "+" + nodeArgs[i];
-    }
-    else {
-        songName += nodeArgs[i];
-    }
-}
-console.log("songName: " + songName);
+    var songName = "";
+    nodeArgs = process.argv;
 
-// function spotifySong() {
+    // Loop through all the words in the node argument starting at index 3
+    for (var i = 3; i< nodeArgs.length; i++) {
+        //strip off the last plus sign
+        if(i > 3 && i < nodeArgs.length) {
+            songName = songName + "+" + nodeArgs[i];
+        }
+        else {
+            songName += nodeArgs[i];
+        }
+    }
+    console.log("songName: " + songName);
+
+
     // added limit 1 so it will return only 1 song
     spotify.search({ type: 'track', query: songName, limit: 1}, function(error, song) {
         // If a song is entered, fetch details 
@@ -124,11 +127,13 @@ console.log("songName: " + songName);
             console.log("The Sign" + "\nAce of Base" + "\nThe Sigh" + "https://open.spotify.com/search/songs/The%20Sign");
         }
     });
-// }
+}
 
+//----------------PROCESS OMDB-----------------------------//
 
 function movieThis() {
     
+    console.log("|REMOVE BEFORE SUBMISSION--------BEGIN OMDB------------|");
     // Store all of the arguments in an array
     var nodeArgs = process.argv;
 
@@ -139,7 +144,7 @@ function movieThis() {
         // Loop through all the words in the node argument
         // And do a little for-loop magic to handle the inclusion of "+"s
             for (var i = 3; i < nodeArgs.length; i++) {
-
+                console.log("movieName: " + movieName);
                 if (i > 3 && i < nodeArgs.length) {
                     movieName = movieName + "+" + nodeArgs[i];
                 }
@@ -173,5 +178,5 @@ function movieThis() {
         movieName = "Mr. Nobody";
         // movieThis();
     }
-
+console.log("|REMOVE BEFORE SUBMISSION--------END OMDB--------------|");
 }
