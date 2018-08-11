@@ -68,15 +68,13 @@ function myTweets() {
     var params = {screen_name: 'jenguin777', count: 20};
     client.get('statuses/user_timeline', params, function(error, tweets, response) {
         if (!error) {
-            console.log("|REMOVE BEFORE SUBMISSION--------BEGIN TWITTER---------|");
             tweets.forEach((singleTweet, i) => {
                 console.log("Tweet created on: " + singleTweet.created_at);
                 console.log("Tweet text: " + singleTweet.text);
             });
         } else {
-            console.log(error);
+            console.log("Twitter API returned an error: " + error);
         }
-        console.log("|REMOVE BEFORE SUBMISSION--------END TWITTER-----------|");
     });
 }
 
@@ -90,87 +88,73 @@ function spotifySong() {
         secret: keys.spotify.secret
     });
 
-    console.log("spotify object" + JSON.stringify(spotify, null, 4));
-    var nodeArgs = process.argv.slice(3).join(' ');
-    console.log("nodeArgs: " + nodeArgs);
+    // process.argv.slice(3) - take all arguments, then, starting at index 3, add them to an array
+    // .join(' ') - now join them by a space to create our songName
+    var nodeArgs = process.argv.slice(3).join('+');
 
-    // Create an empty variable for holding the movie name
+    // Take the nodeArgs array and assign it to a variable called songName
     var songName = nodeArgs; 
-
-
-    // var songName = "";
-    // nodeArgs = process.argv;
-
-    // Loop through all the words in the node argument starting at index 3
-    // for (var i = 3; i< nodeArgs.length; i++) {
-    //     //strip off the last plus sign
-    //     if(i > 3 && i < nodeArgs.length) {
-    //         songName = songName + "+" + nodeArgs[i];
-    //     }
-    //     else {
-    //         songName += nodeArgs[i];
-    //     }
-    // }
-
-    console.log("songName: " + songName);
-
-
-    // added limit 1 so it will return only 1 song
-    spotify.search({ type: 'track', query: songName, limit: 1}, function(error, song) {
-        // If a song is entered, fetch details 
-        if (song) {
-            if (!error) {
-                // console.log(JSON.stringify(song, null, 2));
-                console.log("|REMOVE BEFORE SUBMISSION--------BEGIN SPOTIFY---------|");
-                // Return the song name
-                console.log("Song name: " + song.tracks.items[0].name);
-                // Return the artist's name
-                console.log("Artist's name: " + song.tracks.items[0].artists[0].name);
-                // Return the album name
-                console.log("Album name: " + song.tracks.items[0].album.name);
-                if (song.tracks.items[0].preview_url) {
-                    // If present, return the preview link
-                    console.log("Preview URL: " + song.tracks.items[0].preview_url);
+    
+    if (songName.length === 0) {
+        songName = "The Sign by Ace of Base";
+        // added limit 1 so it will return only 1 song
+        spotify.search({ type: 'track', query: songName, limit: 1}, function(error, song) {
+            // If a song is entered, and no errors, fetch details 
+                if (!error) {
+                    console.log("You didn't provide a song so here are details for 'The Sign' by Ace of Base");
+                    // Return the song name
+                    console.log("Song name: " + song.tracks.items[0].name);
+                    // Return the artist's name
+                    console.log("Artist's name: " + song.tracks.items[0].artists[0].name);
+                        if (song.tracks.items[0].preview_url) {
+                            // If present, return the preview link
+                            console.log("Preview URL: " + song.tracks.items[0].preview_url);
+                        } else {
+                            // Otherwise, return sorry message
+                            console.log("Preview URL: Sorry, there is no preview for this song.");
+                        }
+                    // Return the album name
+                    console.log("Album name: " + song.tracks.items[0].album.name);
+                } else {
+                    console.log("Spotify API returned an error: " + error);
                 }
-                // Otherwise, return sorry message
-                else {
-                    console.log("Preview URL: Sorry, there is no preview for this song.");
+        });
+    // Otherwise, return details for "The Sign" by Ace of Base
+    } else {
+                // added limit 1 so it will return only 1 song
+        spotify.search({ type: 'track', query: songName, limit: 1}, function(error, song) {
+            // If a song is entered, and no errors, fetch details 
+                if (!error) { 
+                    // Return the song name
+                    console.log("Song name: " + song.tracks.items[0].name);
+                    // Return the artist's name
+                    console.log("Artist's name: " + song.tracks.items[0].artists[0].name);
+                        if (song.tracks.items[0].preview_url) {
+                            // If present, return the preview link
+                            console.log("Preview URL: " + song.tracks.items[0].preview_url);
+                        } else {
+                            // Otherwise, return sorry message
+                            console.log("Preview URL: Sorry, there is no preview for this song.");
+                        }
+                    // Return the album name
+                    console.log("Album name: " + song.tracks.items[0].album.name);
+                } else {
+                    console.log("Spotify API returned an error: " + error);
                 }
-            } else {
-                console.log(error);
-            }
-            console.log("|REMOVE BEFORE SUBMISSION--------END SPOTIFY-----------|");
-        // Otherwise, return details for The Sign by Ace of Base
-        } else {
-            console.log("The Sign" + "\nAce of Base" + "\nThe Sigh" + "https://open.spotify.com/search/songs/The%20Sign");
-        }
-    });
+        });
+    }
+
 }
-
 //----------------PROCESS OMDB-----------------------------//
 
 function movieThis() {
     
-    console.log("|REMOVE BEFORE SUBMISSION--------BEGIN OMDB------------|");
-    // Store all of the arguments in an array -- problem with this is that it doesn't handle when no movie was passed
+    // process.argv.slice(3) - take all arguments, then, starting at index 3, add them to an array
+    // .join(' ') - now join them by a space to create our movieName
     var nodeArgs = process.argv.slice(3).join(' ');
-    console.log("nodeArgs: " + nodeArgs);
 
-    // Create an empty variable for holding the movie name
+    // Take the nodeArgs array and assign it to a variable called songName
     var movieName = nodeArgs; //this may be evaluating to false....need to check
-    // --------remove this???  if(movieName) {
-        // // Loop through all the words in the node argument
-        // // And do a little for-loop magic to handle the inclusion of "+"s
-        //     for (var i = 3; i < nodeArgs.length; i++) {
-        //         console.log("movieName: " + movieName);
-        //         if (i > 3 && i < nodeArgs.length) {
-        //             movieName = movieName + "+" + nodeArgs[i];
-        //         }
-        //         else {
-        //             movieName += nodeArgs[i];
-        //         }
-        //     }
-        console.log("movieName: " + movieName);
 
         // If no movie was provided, set movieName to "Mr. Nobody" and make another call to movieThis() function
         if (movieName.length === 0) {
@@ -185,41 +169,42 @@ function movieThis() {
                 if (!error && response.statusCode === 200) {
 
                     // Parse the body of the site and recover the data we want
+                    console.log("You didn't provide a movie so here are details for 'Mr. Nobody' ");
                     console.log("Title: " + JSON.parse(body).Title);
                     console.log("Release Year: " + JSON.parse(body).Year);
                     console.log("IMDB Rating: " + JSON.parse(body).imdbRating);
-                    // console.log("Rotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value);
+                    console.log("Rotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value);
                     console.log("Country where movie was produced: " + JSON.parse(body).Country);
                     console.log("Language of the movie: " + JSON.parse(body).Language);
                     console.log("Plot of the movie: " + JSON.parse(body).Plot);
                     console.log("Actors in the movie: " + JSON.parse(body).Actors);
-                    console.log(body);
                 }
             });
             
         } else {
-                // Then run a request to the OMDB API with the movie specified
-                var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
-                console.log(queryUrl);
+            // If a movie was provided, run a request to the OMDB API with the movie specified
+            var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
 
-                // Submit a request to OMDB API
-                request(queryUrl, function(error, response, body) {
+            // Submit a request to OMDB API
+            request(queryUrl, function(error, response, body) {
 
-                    // If the request is successful
-                    if (!error && response.statusCode === 200) {
-                        console.log(body);
-                        // Parse the body of the site and recover the data we want
-                        // console.log("Title: " + JSON.parse(body).Title);
-                        // console.log("Release Year: " + JSON.parse(body).Year);
-                        // console.log("IMDB Rating: " + JSON.parse(body).imdbRating);
-                        // // console.log("Rotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value);
-                        // console.log("Country where movie was produced: " + JSON.parse(body).Country);
-                        // console.log("Language of the movie: " + JSON.parse(body).Language);
-                        // console.log("Plot of the movie: " + JSON.parse(body).Plot);
-                        // console.log("Actors in the movie: " + JSON.parse(body).Actors);
-                    }
-                });
-            }
-    // }
-console.log("|REMOVE BEFORE SUBMISSION--------END OMDB--------------|");
+                // If the request is successful
+                if (!error && response.statusCode === 200) {
+                    // console.log(body);
+                    //Parse the body of the site and recover the data we want
+                    console.log("Title: " + JSON.parse(body).Title);
+                    console.log("Release Year: " + JSON.parse(body).Year);
+                    console.log("IMDB Rating: " + JSON.parse(body).imdbRating);
+                    console.log("Rotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value);
+                    console.log("Country where movie was produced: " + JSON.parse(body).Country);
+                    console.log("Language of the movie: " + JSON.parse(body).Language);
+                    console.log("Plot of the movie: " + JSON.parse(body).Plot);
+                    console.log("Actors in the movie: " + JSON.parse(body).Actors);
+                } else {
+                    console.log("OMDB API returned an error: " + error);
+                }
+            });
+        }
 }
+
+//----------------PROCESS DO-WHAT-IT-SAYS-------------------//
