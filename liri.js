@@ -25,23 +25,23 @@ var action = process.argv[2];
 // We will then create a switch-case statement (if-else would also work).
 // The switch-case will direct which function gets run.
 
-// switch (action) {
-//     case "my-tweets":
-//       myTweets(); 
-//       break;
+switch (action) {
+    case "my-tweets":
+      myTweets(); 
+      break;
 
-//     case "spotify-this-song":
-//       spotifySong();
-//       break;
+    case "spotify-this-song":
+      spotifySong();
+      break;
     
-//     case "movie-this":
-//       movieThis();
-//       break;
+    case "movie-this":
+      movieThis();
+      break;
     
-//     case "do-what-it-says":
-//       doIt();
-//       break;
-//     }
+    case "do-what-it-says":
+      doIt();
+      break;
+    }
 
 //----------------PROCESS TWITTER-----------------------------//
 
@@ -59,50 +59,119 @@ var client = new Twitter({
     var params = {screen_name: 'jenguin777', count: 20};
     client.get('statuses/user_timeline', params, function(error, tweets, response) {
         if (!error) {
-            console.log("|--------BEGIN TWITTER---------");
+            console.log("|REMOVE BEFORE SUBMISSION--------BEGIN TWITTER---------|");
             tweets.forEach((singleTweet, i) => {
-                console.log(singleTweet.created_at);
-                console.log(singleTweet.text);
+                console.log("Tweet created on: " + singleTweet.created_at);
+                console.log("Tweet text: " + singleTweet.text);
             });
         } else {
             console.log(error);
         }
-        console.log("|--------END TWITTER---------");
+        console.log("|REMOVE BEFORE SUBMISSION--------END TWITTER-----------|");
     });
 // }
 
-//----------------SPOTIFY-----------------------------//
+//----------------PROCESS SPOTIFY-----------------------------//
 
 var spotify = new Spotify({
     id: keys.spotify.id,
     secret: keys.spotify.secret
 });
 
+var songName = "";
+nodeArgs = process.argv;
+
+// Loop through all the words in the node argument starting at index 3
+for (var i = 3; i< nodeArgs.length; i++) {
+    //strip off the last plus sign
+    if(i > 3 && i < nodeArgs.length) {
+        songName = songName + "+" + nodeArgs[i];
+    }
+    else {
+        songName += nodeArgs[i];
+    }
+}
+console.log("songName: " + songName);
+
 // function spotifySong() {
     // added limit 1 so it will return only 1 song
-    spotify.search({ type: 'track', query: 'All the Small Things', limit: 1}, function(error, song) {
-        if (!error) {
-            // console.log(JSON.stringify(song, null, 2));
-            console.log("|--------BEGIN SPOTIFY---------");
-            // Return the song name
-            console.log(song.tracks.items[0].name);
-            // Return the artist's name
-            console.log(song.tracks.items[0].artists[0].name);
-            // Return the album name
-            console.log(song.tracks.items[0].album.name);
-            if (song.tracks.items[0].preview_url) {
-                // Return the preview link
-            console.log(song.tracks.items[0].preview_url);
+    spotify.search({ type: 'track', query: songName, limit: 1}, function(error, song) {
+        // If a song is entered, fetch details 
+        if (songName) {
+            if (!error) {
+                // console.log(JSON.stringify(song, null, 2));
+                console.log("|REMOVE BEFORE SUBMISSION--------BEGIN SPOTIFY---------|");
+                // Return the song name
+                console.log("Song name: " + song.tracks.items[0].name);
+                // Return the artist's name
+                console.log("Artist's name: " + song.tracks.items[0].artists[0].name);
+                // Return the album name
+                console.log(song.tracks.items[0].album.name);
+                if (song.tracks.items[0].preview_url) {
+                    // If present, return the preview link
+                    console.log("Preview URL: " + song.tracks.items[0].preview_url);
+                }
+                // Otherwise, return sorry message
+                else {
+                    console.log("Preview URL: Sorry, there is no preview for this song.");
+                }
+            } else {
+                console.log(error);
             }
-            else {
-                console.log("Sorry, there is no preview for this song.");
-            }
+            console.log("|REMOVE BEFORE SUBMISSION--------END SPOTIFY-----------|");
+        // Otherwise, return details for The Sign by Ace of Base
         } else {
-            console.log(error);
+            console.log("The Sign" + "\nAce of Base" + "\nThe Sigh" + "https://open.spotify.com/search/songs/The%20Sign");
         }
-        console.log("|--------END SPOTIFY---------");
     });
 // }
 
 
+function movieThis() {
+    
+    // Store all of the arguments in an array
+    var nodeArgs = process.argv;
 
+    // Create an empty variable for holding the movie name
+    var movieName = "";
+
+        if(movieName) {
+        // Loop through all the words in the node argument
+        // And do a little for-loop magic to handle the inclusion of "+"s
+            for (var i = 3; i < nodeArgs.length; i++) {
+
+                if (i > 3 && i < nodeArgs.length) {
+                    movieName = movieName + "+" + nodeArgs[i];
+                }
+                else {
+                    movieName += nodeArgs[i];
+                }
+            }
+
+        // Then run a request to the OMDB API with the movie specified
+        var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
+
+        // Submit a request to OMDB API
+        request(queryUrl, function(error, response, body) {
+
+        // If the request is successful
+        if (!error && response.statusCode === 200) {
+
+            // Parse the body of the site and recover the data we want
+            console.log("Title: " + JSON.parse(body).Title);
+            console.log("Release Year: " + JSON.parse(body).Year);
+            console.log("IMDB Rating: " + JSON.parse(body).imdbRating);
+            console.log("Rotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value);
+            console.log("Country where movie was produced: " + JSON.parse(body).Country);
+            console.log("Language of the movie: " + JSON.parse(body).Language);
+            console.log("Plot of the movie: " + JSON.parse(body).Plot);
+            console.log("Actors in the movie: " + JSON.parse(body).Actors);
+        }
+        });
+        // If no movie was provided, set movieName to "Mr. Nobody" and make another call to movieThis() function
+        } else {
+        movieName = "Mr. Nobody";
+        // movieThis();
+    }
+
+}
