@@ -53,7 +53,6 @@ var client = new Twitter({
     access_token_secret: keys.twitter.access_token_secret,
   });
 
-// Wrapping the client.get call in a function or case statement does NOT work...I get TypeError: Cannot read property 'get' of undefined
 function myTweets() {
 
     // Create instance of Twitter object, actual keys not displayed this way
@@ -80,8 +79,7 @@ function myTweets() {
 
 //----------------PROCESS SPOTIFY-----------------------------//
 
-// Wrapping the spotify.search call in a function or case statement does NOT work...I get TypeError: Cannot read property 'get' of undefined
-function spotifySong() {
+function spotifySong(spotifySong) {
 
     var spotify = new Spotify({
         id: keys.spotify.id,
@@ -90,7 +88,7 @@ function spotifySong() {
 
     // process.argv.slice(3) - take all arguments, then, starting at index 3, add them to an array
     // .join(' ') - now join them by a space to create our songName
-    var nodeArgs = process.argv.slice(3).join('+');
+    var nodeArgs = process.argv.slice(3).join(' ');
 
     // Take the nodeArgs array and assign it to a variable called songName
     var songName = nodeArgs; 
@@ -208,3 +206,46 @@ function movieThis() {
 }
 
 //----------------PROCESS DO-WHAT-IT-SAYS-------------------//
+
+function doIt() {
+
+    fs.readFile("random.txt", "utf8", function(error, data) {
+
+            // If the code experiences any errors it will log the error to the console.
+            if (error) {
+                return console.log(error);
+            }
+            else {
+                 // Break the string down by comma separation and store the contents into the output array.
+                 var output = data.split(",");
+                 console.log(output);
+            
+                // Loop Through the newly created output array
+                for (var i = 0; i < output.length; i++) {
+             
+                    var action = output[2];
+                    var value = output[3];
+                    console.log(action);
+                    console.log(value);
+    
+                    switch (action) {
+                        case "my-tweets":
+                        myTweets(JSON.stringify(value)); 
+                        break;
+    
+                        case 'spotify-this-song':
+                        spotifySong(JSON.parse(value));
+                        break;
+                        
+                        case "movie-this":
+                        movieThis(JSON.stringify(value));
+                        break;
+                        
+                        case "do-what-it-says":
+                        doIt(JSON.stringify(value));
+                        break;
+                        }
+                }
+            }
+    });
+}
