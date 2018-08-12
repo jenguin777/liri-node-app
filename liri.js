@@ -78,7 +78,7 @@ function myTweets() {
 }
 
 //----------------PROCESS SPOTIFY-----------------------------//
-
+// I only added spotifySong as an argument because I thought I needed it for the doIt() method where the args are being read in from a file
 function spotifySong(spotifySong) {
 
     var spotify = new Spotify({
@@ -145,14 +145,14 @@ function spotifySong(spotifySong) {
 }
 //----------------PROCESS OMDB-----------------------------//
 
-function movieThis() {
+function movieThis(movie) {
     
     // process.argv.slice(3) - take all arguments, then, starting at index 3, add them to an array
     // .join(' ') - now join them by a space to create our movieName
     var nodeArgs = process.argv.slice(3).join(' ');
 
     // Take the nodeArgs array and assign it to a variable called songName
-    var movieName = nodeArgs; //this may be evaluating to false....need to check
+    var movieName = nodeArgs; 
 
         // If no movie was provided, set movieName to "Mr. Nobody" and make another call to movieThis() function
         if (movieName.length === 0) {
@@ -219,22 +219,28 @@ function doIt() {
                  // Break the string down by comma separation and store the contents into the output array.
                  var output = data.split(",");
                  console.log(output);
+
+                var action = output[0];
+                console.log(action);
+                // Remove the double and single quotes
+                // var value = output[1].replace(/['"]+/g, '');
+                // value = output[1];
+                // console.log(value);
             
                 // Loop Through the newly created output array
                 for (var i = 0; i < output.length; i++) {
-             
-                    var action = output[2];
-                    var value = output[3];
-                    console.log(action);
-                    console.log(value);
+                    // Remove the double and single quotes
+                    value = output[1].replace(/['"]+/g, '');
+                    console.log("within for loop value: " + value);
     
                     switch (action) {
                         case "my-tweets":
-                        myTweets(JSON.stringify(value)); 
+                        myTweets(); 
                         break;
     
-                        case 'spotify-this-song':
-                        spotifySong(JSON.parse(value));
+                        case "spotify-this-song":
+                        console.log("within spotify method: " + value);
+                        spotifySong(value);
                         break;
                         
                         case "movie-this":
