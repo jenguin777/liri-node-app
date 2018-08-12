@@ -31,11 +31,25 @@ switch (action) {
       break;
 
     case "spotify-this-song":
-      spotifySong();
+      // process.argv.slice(3) - take all arguments, then, starting at index 3, add them to an array
+      // .join(' ') - now join them by a space to create our songName
+      var nodeArgs = process.argv.slice(3).join(' ');
+
+      // Take the nodeArgs array and assign it to a variable called songName
+      var songName = nodeArgs;
+      // Call spotifySong() function, passing in songName as a parameter 
+      spotifySong(songName);
       break;
     
     case "movie-this":
-      movieThis();
+      // process.argv.slice(3) - take all arguments, then, starting at index 3, add them to an array
+      // .join(' ') - now join them by a space to create our movieName
+      var nodeArgs = process.argv.slice(3).join(' ');
+
+      // Take the nodeArgs array and assign it to a variable called movieName
+      var movieName = nodeArgs;
+      // Call movieThis() function, passing in movieName as a parameter 
+      movieThis(movieName);
       break;
     
     case "do-what-it-says":
@@ -78,26 +92,20 @@ function myTweets() {
 }
 
 //----------------PROCESS SPOTIFY-----------------------------//
-// I only added spotifySong as an argument because I thought I needed it for the doIt() method where the args are being read in from a file
-function spotifySong(spotifySong) {
+
+function spotifySong(songName) {
 
     var spotify = new Spotify({
         id: keys.spotify.id,
         secret: keys.spotify.secret
     });
 
-    // process.argv.slice(3) - take all arguments, then, starting at index 3, add them to an array
-    // .join(' ') - now join them by a space to create our songName
-    var nodeArgs = process.argv.slice(3).join(' ');
-
-    // Take the nodeArgs array and assign it to a variable called songName
-    var songName = nodeArgs; 
-    
+    // If no song is entered, set songName to "The Sign by Ace of Base"
     if (songName.length === 0) {
         songName = "The Sign by Ace of Base";
         // added limit 1 so it will return only 1 song
         spotify.search({ type: 'track', query: songName, limit: 1}, function(error, song) {
-            // If a song is entered, and no errors, fetch details 
+            // fetch details for "The Sign by Ace of Base"
                 if (!error) {
                     console.log("You didn't provide a song so here are details for 'The Sign' by Ace of Base");
                     // Return the song name
@@ -117,7 +125,7 @@ function spotifySong(spotifySong) {
                     console.log("Spotify API returned an error: " + error);
                 }
         });
-    // Otherwise, return details for "The Sign" by Ace of Base
+    // Otherwise, if a song is entered, fetch details for that song
     } else {
                 // added limit 1 so it will return only 1 song
         spotify.search({ type: 'track', query: songName, limit: 1}, function(error, song) {
@@ -145,15 +153,8 @@ function spotifySong(spotifySong) {
 }
 //----------------PROCESS OMDB-----------------------------//
 
-function movieThis(movie) {
+function movieThis(movieName) {
     
-    // process.argv.slice(3) - take all arguments, then, starting at index 3, add them to an array
-    // .join(' ') - now join them by a space to create our movieName
-    var nodeArgs = process.argv.slice(3).join(' ');
-
-    // Take the nodeArgs array and assign it to a variable called songName
-    var movieName = nodeArgs; 
-
         // If no movie was provided, set movieName to "Mr. Nobody" and make another call to movieThis() function
         if (movieName.length === 0) {
             movieName = "Mr. Nobody";
@@ -188,7 +189,6 @@ function movieThis(movie) {
 
                 // If the request is successful
                 if (!error && response.statusCode === 200) {
-                    // console.log(body);
                     //Parse the body of the site and recover the data we want
                     console.log("Title: " + JSON.parse(body).Title);
                     console.log("Release Year: " + JSON.parse(body).Year);
@@ -211,27 +211,22 @@ function doIt() {
 
     fs.readFile("random.txt", "utf8", function(error, data) {
 
-            // If the code experiences any errors it will log the error to the console.
+            // If the code experiences any errors, log the error to the console.
             if (error) {
                 return console.log(error);
             }
             else {
-                 // Break the string down by comma separation and store the contents into the output array.
-                 var output = data.split(",");
-                 console.log(output);
+                // Break the string down by comma separation and store the contents into the output array.
+                var output = data.split(",");
 
                 var action = output[0];
-                console.log(action);
-                // Remove the double and single quotes
-                // var value = output[1].replace(/['"]+/g, '');
-                // value = output[1];
-                // console.log(value);
+            
+                // Remove the double quotes
+                // var value = output[1].replace(/["]+/g, ''); --> took out the replace, doesn't handle valid apostrophes
+                var value = output[1];
             
                 // Loop Through the newly created output array
-                for (var i = 0; i < output.length; i++) {
-                    // Remove the double and single quotes
-                    value = output[1].replace(/['"]+/g, '');
-                    console.log("within for loop value: " + value);
+                for (var i = 1; i < output.length; i++) {
     
                     switch (action) {
                         case "my-tweets":
@@ -239,7 +234,6 @@ function doIt() {
                         break;
     
                         case "spotify-this-song":
-                        console.log("within spotify method: " + value);
                         spotifySong(value);
                         break;
                         
