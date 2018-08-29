@@ -57,6 +57,7 @@ liri.js can take in one of the following commands:
 # Technologies used
 * Javascript
 * Node.js
+* Twitter, Spotify, and OMDB APIs
 
 # License
 MIT license applies.
