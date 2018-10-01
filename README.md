@@ -59,6 +59,9 @@ liri.js can take in one of the following commands:
 * Node.js
 * Twitter, Spotify, and OMDB APIs
 
+# To run the application
+Just run "npm install" in a terminal window after cloning the project. The required packages will be fetched from the package.json file and installed on your machine.
+
 # License
 MIT license applies.
 
